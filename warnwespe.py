@@ -19,6 +19,21 @@ playerPlaces = []
 playerLetters = []
 playerPoints = []
 playerCount = 0
+edges = [
+    [1, 5, 4],
+    [2, 6, 0],
+    [3, 7, 1],
+    [4, 8, 2],
+    [0, 9, 3],
+
+    [6, 1, 9, 7, 8],
+    [7, 2, 5, 8, 9],
+    [8, 3, 6, 5, 9],
+    [9, 4, 7, 6, 5],
+    [5, 6, 8, 7, 6],
+]
+currentPlayer = 0
+gameFinished = False
 
 def distributeLetters (_letters):
     global letterAtPlace
@@ -72,6 +87,8 @@ def newGame ():
     distributePlayers ()
     distributeLetters (selLetters)
     printPlayers ()
+    while gameFinished == False:
+        makeMove ()
 
 def selectRiddles (_letters):
     selectedRiddles = []
@@ -119,9 +136,34 @@ def printRiddle(r):
         print (createHint (r, i))
 
 def makeMove ():
-    print ("Do you want to stay or move?")
-    print ("Do you want to solve a riddle?")
-    print ("Do you want to drop your letter?")
-    print ("Do you want to pick up a letter?")
+    global currentPlayer
+    print ("Hello player " + str (currentPlayer) + ". ")
+    pos = playerPlaces [currentPlayer]
+    print ("You are at position " + str(pos))
+    options = edges [pos]
+    printOptions(options)
+    inputRequired = True
+    while inputRequired:
+        select = input ("Where do you want to go? ")
+        if select == "N":
+            print ("You decided to not move. ")
+            inputRequired = False
+        else:
+            select = int (select)
+            if select in options:
+                playerPlaces [currentPlayer] = select
+                print ("Great! You went to place " + str (select))
+                inputRequired = False
+            else:
+                print ("Oops! This is not possible.")
+                printOptions(options)
+    print ("#######")
+    #print ("Do you want to solve a riddle?")
+    #print ("Do you want to drop your letter?")
+    #print ("Do you want to pick up a letter?")
+    currentPlayer = (currentPlayer + 1) % playerCount
+
+def printOptions(options):
+    print ("You can go to " + str(options) + " or not move with N.")
 
 newGame ()
